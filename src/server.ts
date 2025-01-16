@@ -27,7 +27,7 @@ const app = express();
 
 // ミドルウェアの設定
 app.use(express.json());
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -60,7 +60,7 @@ app.get('/users/:id', (req: Request, res: Response) => {
 
     if (!user) {
         const response: ApiResponse = { error: 'User not found' };
-        return res.status(404).json(response);
+        res.status(404).json(response);
     }
 
     const response: ApiResponse = { data: user };
@@ -73,7 +73,7 @@ app.post('/users', (req: Request, res: Response) => {
 
     if (!name || typeof name !== 'string') {
         const response: ApiResponse = { error: 'Invalid user data' };
-        return res.status(400).json(response);
+        res.status(400).json(response);
     }
 
     const newUser: User = {
