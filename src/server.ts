@@ -4,17 +4,36 @@ import * as url from 'url';
 // 定数の型定義
 const PORT: number = 3000;
 
-// レスポンスの型定義
-interface ApiResponse {
-    message?: string;
-    error?: string;
-    data?: any;
-}
-
 // User型の定義
 interface User {
     id: number;
     name: string;
+}
+
+// APIのリクエスト・レスポンスの型定義
+interface CreateUserRequest {
+    name: string;
+}
+
+interface WelcomeResponse {
+    message: string;
+}
+
+interface UsersResponse {
+    data: User[];
+}
+
+interface UserResponse {
+    data: User;
+}
+
+interface UserCreatedResponse {
+    message: string;
+    data: User;
+}
+
+interface ErrorResponse {
+    error: string;
 }
 
 // メモリ上のユーザーストア
@@ -49,8 +68,9 @@ type RequestHandler = (
 const handleRequest: RequestHandler = async (req, res) => {
     // URLが必ず存在することを保証
     if (!req.url) {
+        const errorResponse: ErrorResponse = { error: 'Invalid URL' };
         res.statusCode = 400;
-        res.end(JSON.stringify({ error: 'Invalid URL' }));
+        res.end(JSON.stringify(errorResponse));
         return;
     }
 
@@ -60,55 +80,70 @@ const handleRequest: RequestHandler = async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
-    // レスポンスオブジェクトの初期化
-    let response: ApiResponse;
-
     try {
         // メソッドとパスに基づいてレスポンスを生成
         if (req.method === 'GET') {
             switch (parsedUrl.pathname) {
-                case '/':
-                    response = { message: "Hello, Node.js!" };
+                case '/': {
+                    const response: WelcomeResponse = { message: "Hello, Node.js!" };
                     res.statusCode = 200;
+                    res.end(JSON.stringify(response));
                     break;
+                }
 
-                case '/users':
-                    response = { data: users };
+                case '/users': {
+                    const response: UsersResponse = { data: users };
                     res.statusCode = 200;
+                    res.end(JSON.stringify(response));
                     break;
+                }
 
-                case '/users/1':
+                case '/users/1': {
                     const user = users.find(u => u.id === 1);
-                    response = { data: user };
+                    if (!user) {
+                        const errorResponse: ErrorResponse = { error: 'User not found' };
+                        res.statusCode = 404;
+                        res.end(JSON.stringify(errorResponse));
+                        return;
+                    }
+                    const response: UserResponse = { data: user };
                     res.statusCode = 200;
+                    res.end(JSON.stringify(response));
                     break;
+                }
 
-                default:
-                    response = { error: 'Not Found' };
+                default: {
+                    const errorResponse: ErrorResponse = { error: 'Not Found' };
                     res.statusCode = 404;
+                    res.end(JSON.stringify(errorResponse));
+                }
             }
         } else if (req.method === 'POST' && parsedUrl.pathname === '/users') {
             const body = await getRequestBody(req);
-            const userData = JSON.parse(body);
+            const userData = JSON.parse(body) as CreateUserRequest;
 
             // 入力バリデーション
             if (!userData.name || typeof userData.name !== 'string') {
-                response = { error: 'Invalid user data' };
+                const errorResponse: ErrorResponse = { error: 'Invalid user data' };
                 res.statusCode = 400;
-            } else {
-                // 新しいユーザーの作成
-                const newUser: User = {
-                    id: users.length + 1,
-                    name: userData.name
-                };
-                users.push(newUser);
-
-                response = {
-                    message: 'User created successfully',
-                    data: newUser
-                };
-                res.statusCode = 201;
+                res.end(JSON.stringify(errorResponse));
+                return;
             }
+
+            // 新しいユーザーの作成
+            const newUser: User = {
+                id: users.length + 1,
+                name: userData.name
+            };
+            users.push(newUser);
+
+            const response: UserCreatedResponse = {
+                message: 'User created successfully',
+                data: newUser
+            };
+            res.statusCode = 201;
+            res.end(JSON.stringify(response));
+
         } else if (req.method === 'OPTIONS') {
             // CORS プリフライトリクエストの処理
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -117,15 +152,15 @@ const handleRequest: RequestHandler = async (req, res) => {
             res.end();
             return;
         } else {
-            response = { error: 'Method Not Allowed' };
+            const errorResponse: ErrorResponse = { error: 'Method Not Allowed' };
             res.statusCode = 405;
+            res.end(JSON.stringify(errorResponse));
         }
     } catch (err) {
-        response = { error: 'Internal Server Error' };
+        const errorResponse: ErrorResponse = { error: 'Internal Server Error' };
         res.statusCode = 500;
+        res.end(JSON.stringify(errorResponse));
     }
-
-    res.end(JSON.stringify(response));
 };
 
 // サーバーの作成と起動
