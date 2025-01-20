@@ -2,7 +2,8 @@ import express from 'express';
 import { corsMiddleware } from './middlewares/cors';
 import { errorHandler } from './middlewares/error';
 import userRoutes from './routes/users';
-import { ApiResponse } from './types/api';
+import {ErrorResponse} from "./types/errorResponse";
+import {WelcomeResponse} from "./types/welcomeResponse";
 
 const PORT: number = 3000;
 const app = express();
@@ -13,7 +14,7 @@ app.use(corsMiddleware);
 
 // ルーティング
 app.get('/', (req, res) => {
-    const response: ApiResponse = { message: "Hello, Express!" };
+    const response: WelcomeResponse = { message: "Hello, Express!" };
     res.json(response);
 });
 
@@ -21,7 +22,7 @@ app.use('/users', userRoutes);
 
 // 404ハンドラー
 app.use((req, res) => {
-    const response: ApiResponse = { error: 'Not Found' };
+    const response: ErrorResponse = { error: 'Not Found' };
     res.status(404).json(response);
 });
 
