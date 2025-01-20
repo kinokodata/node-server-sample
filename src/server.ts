@@ -3,17 +3,36 @@ import express, { Request, Response, NextFunction } from 'express';
 // 定数の型定義
 const PORT: number = 3000;
 
-// レスポンスの型定義
-interface ApiResponse {
-    message?: string;
-    error?: string;
-    data?: any;
-}
-
 // User型の定義
 interface User {
     id: number;
     name: string;
+}
+
+// APIのリクエスト・レスポンスの型定義
+interface CreateUserRequest {
+    name: string;
+}
+
+interface WelcomeResponse {
+    message: string;
+}
+
+interface UsersResponse {
+    data: User[];
+}
+
+interface UserResponse {
+    data: User;
+}
+
+interface UserCreatedResponse {
+    message: string;
+    data: User;
+}
+
+interface ErrorResponse {
+    error: string;
 }
 
 // メモリ上のユーザーストア
@@ -37,19 +56,19 @@ app.use((req, res, next) => {
 // エラーハンドリングミドルウェア
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
-    const response: ApiResponse = { error: 'Internal Server Error' };
+    const response: ErrorResponse = { error: 'Internal Server Error' };
     res.status(500).json(response);
 };
 
 // ルートハンドラー
 app.get('/', (req: Request, res: Response) => {
-    const response: ApiResponse = { message: "Hello, Express!" };
+    const response: WelcomeResponse = { message: "Hello, Express!" };
     res.json(response);
 });
 
 // ユーザー一覧の取得
 app.get('/users', (req: Request, res: Response) => {
-    const response: ApiResponse = { data: users };
+    const response: UsersResponse = { data: users };
     res.json(response);
 });
 
@@ -59,11 +78,11 @@ app.get('/users/:id', (req: Request, res: Response) => {
     const user = users.find(u => u.id === id);
 
     if (!user) {
-        const response: ApiResponse = { error: 'User not found' };
+        const response: ErrorResponse = { error: 'User not found' };
         res.status(404).json(response);
     }
 
-    const response: ApiResponse = { data: user };
+    const response: UserResponse = { data: user as User};
     res.json(response);
 });
 
@@ -72,7 +91,7 @@ app.post('/users', (req: Request, res: Response) => {
     const { name } = req.body;
 
     if (!name || typeof name !== 'string') {
-        const response: ApiResponse = { error: 'Invalid user data' };
+        const response: ErrorResponse = { error: 'Invalid user data' };
         res.status(400).json(response);
     }
 
@@ -83,7 +102,7 @@ app.post('/users', (req: Request, res: Response) => {
 
     users.push(newUser);
 
-    const response: ApiResponse = {
+    const response: UserCreatedResponse = {
         message: 'User created successfully',
         data: newUser
     };
@@ -93,7 +112,7 @@ app.post('/users', (req: Request, res: Response) => {
 
 // 404ハンドラー
 app.use((req: Request, res: Response) => {
-    const response: ApiResponse = { error: 'Not Found' };
+    const response: ErrorResponse = { error: 'Not Found' };
     res.status(404).json(response);
 });
 
