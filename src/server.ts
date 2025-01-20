@@ -80,6 +80,7 @@ app.get('/users/:id', (req: Request, res: Response) => {
     if (!user) {
         const response: ErrorResponse = { error: 'User not found' };
         res.status(404).json(response);
+        return;
     }
 
     const response: UserResponse = { data: user as User};
@@ -93,6 +94,7 @@ app.post('/users', (req: Request, res: Response) => {
     if (!name || typeof name !== 'string') {
         const response: ErrorResponse = { error: 'Invalid user data' };
         res.status(400).json(response);
+        return;
     }
 
     const newUser: User = {
