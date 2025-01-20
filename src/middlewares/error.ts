@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { ApiResponse } from '../types/api';
+import { ErrorResponse } from '../types/errorResponse';
 
 export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
-    const response: ApiResponse = { error: 'Internal Server Error' };
+    const response: ErrorResponse = { error: 'Internal Server Error' };
     res.status(500).json(response);
 };
