@@ -12,15 +12,7 @@ CREATE TABLE departments (
 -- ユーザーテーブルの作成
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(60) NOT NULL,
-    age INTEGER NOT NULL,
-    phone VARCHAR(20),
-    department_id INTEGER REFERENCES departments(id),
-    status INTEGER DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    name VARCHAR(100) NOT NULL
 );
 
 -- 商品関連テーブル
@@ -92,11 +84,6 @@ END;
 $$ language 'plpgsql';
 
 -- 全テーブルのトリガー作成
-CREATE TRIGGER update_users_updated_at
-    BEFORE UPDATE ON users
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_products_updated_at
     BEFORE UPDATE ON products
     FOR EACH ROW
@@ -142,10 +129,10 @@ INSERT INTO departments (department_name) VALUES
     ('人事部');
 
 -- ユーザーデータ
-INSERT INTO users (name, email, password_hash, age, phone, department_id, status) VALUES
-    ('山田太郎', 'yamada@example.com', 'hashedpassword123', 25, '090-1234-5678', 1, 1),
-    ('佐藤花子', 'sato@example.com', 'hashedpassword456', 20, NULL, 2, 1),
-    ('鈴木一郎', 'suzuki@example.com', 'hashedpassword789', 29, '080-8765-4321', 3, 2);
+INSERT INTO users (name) VALUES
+    ('山田太郎'),
+    ('佐藤花子'),
+    ('鈴木一郎');
 
 -- 商品データ
 INSERT INTO products (name, price, stock_quantity, category_id) VALUES
