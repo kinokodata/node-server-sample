@@ -1,21 +1,20 @@
-import { User } from '../types/user';
+import { User } from "../types/user";
+import pool from "../db/config";
 
-// メモリ上のユーザーストア
-export let users: User[] = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Doe" }
-];
+export async function findAll(): Promise<User[]> {
+    const result = await pool.query("SELECT id, name FROM users");
+    return result.rows;
+}
 
-// ユーザー操作のメソッド
-export const findById = (id: number): User | undefined => {
-    return users.find(u => u.id === id);
-};
+export async function findById(id: number): Promise<User | undefined> {
+    const result = await pool.query("SELECT id, name FROM users WHERE id = $1", [id]);
+    return result.rows[0];
+}
 
-export const create = (name: string): User => {
-    const newUser: User = {
-        id: users.length + 1,
-        name
-    };
-    users.push(newUser);
-    return newUser;
-};
+export async function create(name: string): Promise<User> {
+    const result = await pool.query(
+        "INSERT INTO users (name) VALUES ($1) RETURNING id, name",
+        [name]
+    );
+    return result.rows[0];
+}

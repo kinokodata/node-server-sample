@@ -10,15 +10,16 @@ import {User} from "../types/user";
 const router = express.Router();
 
 // ユーザー一覧の取得
-router.get('/', (req: Request, res: Response) => {
-    const response: UsersResponse = { data: UserModel.users };
+router.get('/', async (req: Request, res: Response) => {
+    const users = await UserModel.findAll();
+    const response: UsersResponse = {data: users};
     res.json(response);
 });
 
 // 特定のユーザーの取得
-router.get('/:id', (req: Request<{ id: string }>, res: Response) => {
+router.get('/:id', async (req: Request<{ id: string }>, res: Response) => {
     const id = parseInt(req.params.id);
-    const user= UserModel.findById(id);
+    const user= await UserModel.findById(id);
 
     if (!user) {
         const response: ErrorResponse = { error: 'User not found' };
@@ -31,7 +32,7 @@ router.get('/:id', (req: Request<{ id: string }>, res: Response) => {
 });
 
 // 新規ユーザーの作成
-router.post('/', (req: Request<{}, {}, CreateUserRequest>, res: Response) => {
+router.post('/', async (req: Request<{}, {}, CreateUserRequest>, res: Response) => {
     const { name } = req.body;
 
     if (!name || typeof name !== 'string') {
@@ -40,7 +41,7 @@ router.post('/', (req: Request<{}, {}, CreateUserRequest>, res: Response) => {
         return;
     }
 
-    const newUser = UserModel.create(name);
+    const newUser = await UserModel.create(name);
     const response: UserCreatedResponse = {
         message: 'User created successfully',
         data: newUser
