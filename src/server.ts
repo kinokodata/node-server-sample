@@ -10,7 +10,7 @@ interface User {
 }
 
 // APIのリクエスト・レスポンスの型定義
-interface CreateUserRequest {
+interface UserCreateRequest {
     name: string;
 }
 
