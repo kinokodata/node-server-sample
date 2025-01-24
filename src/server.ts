@@ -4,6 +4,8 @@ import { errorHandler } from './middlewares/error';
 import userRoutes from './routes/users';
 import {ErrorResponse} from "./types/errorResponse";
 import {WelcomeResponse} from "./types/welcomeResponse";
+// この行を追加
+import productCategoryRoutes from "./routes/productCategories";
 
 const PORT: number = 3000;
 const app = express();
@@ -19,6 +21,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', userRoutes);
+// この行を追加
+app.use('/product-categories', productCategoryRoutes)
 
 // 404ハンドラー
 app.use((req, res) => {
