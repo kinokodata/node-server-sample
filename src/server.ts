@@ -11,7 +11,7 @@ interface User {
 }
 
 // APIのリクエスト・レスポンスの型定義
-interface CreateUserRequest {
+interface UserCreateRequest {
     name: string;
 }
 
@@ -120,7 +120,7 @@ const handleRequest: RequestHandler = async (req, res) => {
             }
         } else if (req.method === 'POST' && parsedUrl.pathname === '/users') {
             const body = await getRequestBody(req);
-            const userData = JSON.parse(body) as CreateUserRequest;
+            const userData = JSON.parse(body) as UserCreateRequest;
 
             // 入力バリデーション
             if (!userData.name || typeof userData.name !== 'string') {
