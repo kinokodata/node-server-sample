@@ -3,7 +3,7 @@ import * as UserModel from '../models/user';
 import {UserResponse} from "../types/userResponse";
 import {ErrorResponse} from "../types/errorResponse";
 import {UserCreatedResponse} from "../types/userCreatedResponse";
-import {CreateUserRequest} from "../types/createUserRequest";
+import {UserCreateRequest} from "../types/userCreateRequest";
 import {UsersResponse} from "../types/usersResponse";
 import {User} from "../types/user";
 
@@ -31,7 +31,7 @@ router.get('/:id', (req: Request<{ id: string }>, res: Response) => {
 });
 
 // 新規ユーザーの作成
-router.post('/', (req: Request<{}, {}, CreateUserRequest>, res: Response) => {
+router.post('/', (req: Request<{}, {}, UserCreateRequest>, res: Response) => {
     const { name } = req.body;
 
     if (!name || typeof name !== 'string') {
