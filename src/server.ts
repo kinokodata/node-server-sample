@@ -1,11 +1,12 @@
 import express from 'express';
 import { corsMiddleware } from './middlewares/cors';
 import { errorHandler } from './middlewares/error';
-import userRoutes from './routes/users';
 import {ErrorResponse} from "./types/errorResponse";
 import {WelcomeResponse} from "./types/welcomeResponse";
-// この行を追加
+import userRoutes from './routes/users';
 import productCategoryRoutes from "./routes/productCategories";
+// この行を追加
+import productRoutes from "./routes/products";
 
 const PORT: number = 3000;
 const app = express();
@@ -21,8 +22,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', userRoutes);
-// この行を追加
 app.use('/product-categories', productCategoryRoutes)
+// この行を追加
+app.use('/products', productRoutes);
 
 // 404ハンドラー
 app.use((req, res) => {
