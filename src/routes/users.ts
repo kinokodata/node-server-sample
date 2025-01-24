@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express';
 import * as UserModel from '../models/user';
-import {UserResponse} from "../types/userResponse";
+import {UserResponse} from "../types/user/userResponse";
 import {ErrorResponse} from "../types/errorResponse";
-import {UserCreatedResponse} from "../types/userCreatedResponse";
-import {CreateUserRequest} from "../types/createUserRequest";
-import {UsersResponse} from "../types/usersResponse";
-import {User} from "../types/user";
+import {UserCreatedResponse} from "../types/user/userCreatedResponse";
+import {CreateUserRequest} from "../types/user/createUserRequest";
+import {UsersResponse} from "../types/user/usersResponse";
+import {User} from "../types/user/user";
 
 const router = express.Router();
 
