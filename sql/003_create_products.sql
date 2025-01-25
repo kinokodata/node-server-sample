@@ -21,8 +21,6 @@ CREATE TABLE daily_sales (
     product_id INTEGER REFERENCES products(id),
     quantity INTEGER NOT NULL,
     total_amount INTEGER NOT NULL,
-    weather_condition VARCHAR(20),
-    max_temperature DECIMAL(4,1),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

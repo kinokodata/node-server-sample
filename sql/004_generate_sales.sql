@@ -41,7 +41,11 @@ END;
                 ELSE '雨'
 END;
 
-        -- 各商品の売上データを生成
+        -- 気象データの挿入
+INSERT INTO daily_weather (date, weather_condition, max_temperature)
+VALUES (curr_date, weather, max_temp);
+
+-- 各商品の売上データを生成
 FOR product IN SELECT * FROM products LOOP
     -- 基本の販売数量（ランダム要素を含む）
     base_quantity := 10 + (RANDOM() * 20)::INTEGER;
@@ -85,10 +89,10 @@ END CASE;
             -- 売上データの挿入
             IF base_quantity > 0 THEN
                 INSERT INTO daily_sales
-                    (sale_date, product_id, quantity, total_amount, weather_condition, max_temperature)
+                    (sale_date, product_id, quantity, total_amount)
                 VALUES
                     (curr_date, product.id, base_quantity::INTEGER,
-                     (base_quantity * product.base_price)::INTEGER, weather, max_temp);
+                     (base_quantity * product.base_price)::INTEGER);
 END IF;
 END LOOP;
 
