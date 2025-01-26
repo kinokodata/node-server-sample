@@ -1,20 +1,29 @@
 import { User } from "../types/user/user";
-import pool from "../db/config";
+import {supabase} from "../db/clilent"
 
 export async function findAll(): Promise<User[]> {
-    const result = await pool.query("SELECT id, name FROM users");
-    return result.rows;
+    const {data, error} = await supabase
+        .from('users')
+        .select();
+    return data as User[];
 }
 
 export async function findById(id: number): Promise<User | undefined> {
-    const result = await pool.query("SELECT id, name FROM users WHERE id = $1", [id]);
-    return result.rows[0];
+    const {data, error} = await supabase
+        .from('users')
+        .select()
+        .eq('id', id)
+        .single();
+    return data as User;
 }
 
 export async function create(name: string): Promise<User> {
-    const result = await pool.query(
-        "INSERT INTO users (name) VALUES ($1) RETURNING id, name",
-        [name]
-    );
-    return result.rows[0];
+    const {data, error} = await supabase
+        .from('users')
+        .insert({
+            name: name
+        })
+        .select()
+        .single()
+    return data as User;
 }

@@ -1,57 +1,58 @@
 import { ProductCategory } from "../types/product-category/productCategory";
-import pool from "../db/config";
+import {supabase} from "../db/clilent";
 
 export async function findAll(): Promise<ProductCategory[]> {
-    const result = await pool.query("SELECT id, name, description FROM product_categories");
-    return result.rows;
+    const {data, error} = await supabase
+        .from("product_categories")
+        .select();
+    return data as ProductCategory[];
 }
 
 export async function findById(id: number): Promise<ProductCategory | undefined> {
-    const result = await pool.query(
-        "SELECT id, name, description FROM product_categories WHERE id = $1",
-        [id]
-    );
-    return result.rows[0];
+    const {data, error} = await supabase
+        .from("product_categories")
+        .select()
+        .single();
+    return data as ProductCategory;
 }
 
 export async function create(name: string, description?: string): Promise<ProductCategory> {
-    const result = await pool.query(
-        "INSERT INTO product_categories (name, description) VALUES ($1, $2) RETURNING id, name, description",
-        [name, description]
-    );
-    return result.rows[0];
+    const {data, error} = await supabase
+        .from("product_categories")
+        .insert({
+            name: name,
+            description: description || null
+        })
+        .select()
+        .single();
+    return data as ProductCategory;
 }
 
 export async function update(id: number, name?: string, description?: string): Promise<ProductCategory | undefined> {
-    const setColumns = [];
-    const values: [string | number] = [id];
-    let paramCounter = 2;
+    const updateData: { name?: string; description?: string } = {};
 
-    if (name) {
-        setColumns.push(`name = $${paramCounter}`);
-        values.push(name);
-        paramCounter++;
+    if(!!name) {
+        updateData.name = name;
     }
-    if (description !== undefined) {
-        setColumns.push(`description = $${paramCounter}`);
-        values.push(description);
+    if(!!description) {
+        updateData.description = description;
     }
 
-    if (setColumns.length === 0) {
-        return findById(id);
-    }
-
-    const result = await pool.query(
-        `UPDATE product_categories SET ${setColumns.join(", ")} WHERE id = $1 RETURNING id, name, description`,
-        values
-    );
-    return result.rows[0];
+    const {data, error} = await supabase
+        .from("product_categories")
+        .update(updateData)
+        .eq("id", id)
+        .select()
+        .single();
+    return data as ProductCategory;
 }
 
 export async function deleteById(id: number): Promise<ProductCategory | undefined> {
-    const result = await pool.query(
-        "DELETE FROM product_categories WHERE id = $1 RETURNING id, name, description",
-        [id]
-    );
-    return result.rows[0];
+    const {data, error} = await supabase
+        .from("product_categories")
+        .delete()
+        .eq("id", id)
+        .select()
+        .single();
+    return data as ProductCategory;
 }
