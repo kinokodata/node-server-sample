@@ -24,6 +24,6 @@ export async function create(name: string): Promise<User> {
             name: name
         })
         .select()
-        .single()
+        .single();
     return data as User;
 }

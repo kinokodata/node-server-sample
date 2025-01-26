@@ -12,7 +12,9 @@ export async function findById(id: number): Promise<ProductCategory | undefined>
     const {data, error} = await supabase
         .from("product_categories")
         .select()
+        .eq("id", id)
         .single();
+    console.log(error);
     return data as ProductCategory;
 }
 

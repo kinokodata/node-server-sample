@@ -1,47 +1,55 @@
 import { Product } from "../types/product/product";
 import {supabase} from "../db/clilent";
 
-
 export async function findAll(): Promise<Product[]> {
     const {data, error} = await supabase
         .from("products")
         .select(`
-            id,
-            name, 
-            basePrice, 
-            createdAt,
-            category(id, name, description)
+            *,
+            product_categories(id, name, description)
         `);
+
+    if(error) {
+        console.log(error);
+        return [];
+    }
+
     if(!data) {
         return [];
     }
-    console.log(data);
-    const result = data.map(v => {
+
+    return data.map(v => {
         return {
-            category: v.category[0]
+            id: v.id,
+            name: v.name,
+            basePrice: v.base_price,
+            createdAt: v.created_at,
+            category: v.product_categories
         } as Product;
     });
-    return result as Product[];
 }
 
 export async function findById(id: number): Promise<Product | undefined> {
     const {data, error} = await supabase
         .from("products")
         .select(`
-            id,
-            name, 
-            basePrice, 
-            createdAt,
-            category(id, name, description)
+            *,
+            product_categories(*)
         `)
         .eq("id", id)
         .single();
-    if(!data) {
+
+    if(error) {
+        console.log(error);
         return undefined;
     }
-    console.log(data);
+
     return {
-        category: data.category[0]
+        id: data.id,
+        name: data.name,
+        basePrice: data.base_price,
+        createdAt: data.created_at,
+        category: data.product_categories
     } as Product;
 }
 
@@ -50,14 +58,25 @@ export async function create(name: string, categoryId: number, basePrice: number
         .from("products")
         .insert({
             name: name,
-            categoryId: categoryId,
-            basePrice: basePrice
+            category_id: categoryId,
+            base_price: basePrice
         })
-        .select()
+        .select(`
+            *,
+            product_categories(*)
+        `)
         .single();
-    console.log(data);
+
+    if(error) {
+        console.log(error);
+    }
+
     return {
-        category: data.category[0]
+        id: data.id,
+        name: data.name,
+        basePrice: data.base_price,
+        createdAt: data.created_at,
+        category: data.product_categories
     } as Product;
 }
 
@@ -65,15 +84,33 @@ export async function update(
     id: number,
     updates: { name?: string; categoryId?: number; basePrice?: number }
 ): Promise<Product | undefined> {
+    const updatesSnakeCase = {
+        name: updates.name,
+        category_id: updates.categoryId,
+        base_price: updates.basePrice
+    };
+
     const {data, error} = await supabase
         .from("products")
-        .update(updates)
+        .update(updatesSnakeCase)
         .eq("id", id)
-        .select()
+        .select(`
+            *,
+            product_categories(*)
+        `)
         .single();
-    console.log(data);
+
+    if(error) {
+        console.log(error);
+        return undefined;
+    }
+
     return {
-        category: data.category[0]
+        id: data.id,
+        name: data.name,
+        basePrice: data.base_price,
+        createdAt: data.created_at,
+        category: data.product_categories
     } as Product;
 }
 
@@ -82,7 +119,22 @@ export async function deleteById(id: number): Promise<Product | undefined> {
         .from("products")
         .delete()
         .eq("id", id)
-        .select()
+        .select(`
+            *,
+            product_categories(*)
+        `)
         .single();
-    return data as Product;
+
+    if(error) {
+        console.log(error);
+        return undefined;
+    }
+
+    return {
+        id: data.id,
+        name: data.name,
+        basePrice: data.base_price,
+        createdAt: data.created_at,
+        category: data.product_categories
+    } as Product;
 }
