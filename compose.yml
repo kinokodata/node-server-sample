@@ -9,36 +9,5 @@ services:
     command: sh -c "npm install && npx nodemon --exec ts-node src/server.ts"
     ports:
       - "23000:3000"
-
-  postgres:
-    image: postgres:15
     environment:
-      POSTGRES_DB: ${DB_NAME:-defaultdb}
-      POSTGRES_USER: ${DB_USER:-defaultuser}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-defaultpassword}
-    volumes:
-      - ./sql:/docker-entrypoint-initdb.d
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "25432:5432"
-    command: >
-      postgres 
-      -c log_timezone=Asia/Tokyo 
-      -c timezone=Asia/Tokyo
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-adminpassword}
-      TZ: Asia/Tokyo
-    ports:
-      - "28080:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      - postgres
-
-volumes:
-  postgres_data:
-  pgadmin_data:
+      SUPABASE_ACCESS_TOKEN: ${SUPABASE_ACCESS_TOKEN}
