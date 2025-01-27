@@ -6,7 +6,7 @@ export async function findAll(): Promise<Product[]> {
         .from("products")
         .select(`
             *,
-            product_categories(id, name, description)
+            product_categories(*)
         `);
 
     if(error) {
@@ -53,7 +53,7 @@ export async function findById(id: number): Promise<Product | undefined> {
     } as Product;
 }
 
-export async function create(name: string, categoryId: number, basePrice: number): Promise<Product> {
+export async function create(name: string, categoryId: number, basePrice: number): Promise<Product | undefined> {
     const {data, error} = await supabase
         .from("products")
         .insert({
@@ -69,6 +69,7 @@ export async function create(name: string, categoryId: number, basePrice: number
 
     if(error) {
         console.log(error);
+        return undefined;
     }
 
     return {

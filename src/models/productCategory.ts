@@ -5,6 +5,12 @@ export async function findAll(): Promise<ProductCategory[]> {
     const {data, error} = await supabase
         .from("product_categories")
         .select();
+
+    if(error) {
+        console.log(error);
+        return [];
+    }
+
     return data as ProductCategory[];
 }
 
@@ -14,7 +20,12 @@ export async function findById(id: number): Promise<ProductCategory | undefined>
         .select()
         .eq("id", id)
         .single();
-    console.log(error);
+
+    if(error) {
+        console.log(error);
+        return undefined;
+    }
+
     return data as ProductCategory;
 }
 
@@ -27,6 +38,11 @@ export async function create(name: string, description?: string): Promise<Produc
         })
         .select()
         .single();
+
+    if(error) {
+        console.log(error);
+    }
+
     return data as ProductCategory;
 }
 
@@ -46,6 +62,12 @@ export async function update(id: number, name?: string, description?: string): P
         .eq("id", id)
         .select()
         .single();
+
+    if(error) {
+        console.log(error);
+        return undefined;
+    }
+
     return data as ProductCategory;
 }
 
@@ -56,5 +78,11 @@ export async function deleteById(id: number): Promise<ProductCategory | undefine
         .eq("id", id)
         .select()
         .single();
+
+    if(error) {
+        console.log(error);
+        return undefined;
+    }
+
     return data as ProductCategory;
 }

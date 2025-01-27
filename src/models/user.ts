@@ -5,6 +5,12 @@ export async function findAll(): Promise<User[]> {
     const {data, error} = await supabase
         .from('users')
         .select();
+
+    if(error) {
+        console.log(error);
+        return [];
+    }
+
     return data as User[];
 }
 
@@ -14,6 +20,12 @@ export async function findById(id: number): Promise<User | undefined> {
         .select()
         .eq('id', id)
         .single();
+
+    if(error) {
+        console.log(error);
+        return undefined;
+    }
+
     return data as User;
 }
 
@@ -25,5 +37,10 @@ export async function create(name: string): Promise<User> {
         })
         .select()
         .single();
+
+    if(error) {
+        console.log(error);
+    }
+
     return data as User;
 }
