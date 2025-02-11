@@ -40,7 +40,6 @@ CREATE TABLE daily_sales (
     sale_date DATE NOT NULL,
     product_id INTEGER REFERENCES products(id),
     quantity INTEGER NOT NULL,
-    total_amount INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -163,10 +162,9 @@ END CASE;
             -- 売上データの挿入
             IF base_quantity > 0 THEN
                 INSERT INTO daily_sales
-                    (sale_date, product_id, quantity, total_amount)
+                    (sale_date, product_id, quantity)
                 VALUES
-                    (curr_date, product.id, base_quantity::INTEGER,
-                     (base_quantity * product.base_price)::INTEGER);
+                    (curr_date, product.id, base_quantity::INTEGER);
 END IF;
 END LOOP;
 
