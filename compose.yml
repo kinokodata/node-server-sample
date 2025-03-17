@@ -1,5 +1,6 @@
 services:
   node-dev:
+    container_name: node-server-sample
     build:
       context: .
       dockerfile: Dockerfile
