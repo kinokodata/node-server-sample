@@ -1,5 +1,5 @@
-import express, { Request, Response } from 'express';
-import * as UserModel from '../models/user';
+import express, { Request, Response } from "express";
+import * as UserModel from "../models/user";
 import {UserResponse} from "../types/userResponse";
 import {ErrorResponse} from "../types/errorResponse";
 import {UserCreatedResponse} from "../types/userCreatedResponse";
@@ -10,18 +10,18 @@ import {User} from "../types/user";
 const router = express.Router();
 
 // ユーザー一覧の取得
-router.get('/', (req: Request, res: Response) => {
+router.get("/", (req: Request, res: Response) => {
     const response: UsersResponse = { data: UserModel.users };
     res.json(response);
 });
 
 // 特定のユーザーの取得
-router.get('/:id', (req: Request<{ id: string }>, res: Response) => {
+router.get("/:id", (req: Request<{ id: string }>, res: Response) => {
     const id = parseInt(req.params.id);
     const user= UserModel.findById(id);
 
     if (!user) {
-        const response: ErrorResponse = { error: 'User not found' };
+        const response: ErrorResponse = { error: "User not found" };
         res.status(404).json(response);
         return;
     }
@@ -31,18 +31,18 @@ router.get('/:id', (req: Request<{ id: string }>, res: Response) => {
 });
 
 // 新規ユーザーの作成
-router.post('/', (req: Request<{}, {}, UserCreateRequest>, res: Response) => {
+router.post("/", (req: Request<{}, {}, UserCreateRequest>, res: Response) => {
     const { name } = req.body;
 
-    if (!name || typeof name !== 'string') {
-        const response: ErrorResponse = { error: 'Invalid user data' };
+    if (!name || typeof name !== "string") {
+        const response: ErrorResponse = { error: "Invalid user data" };
         res.status(400).json(response);
         return;
     }
 
     const newUser = UserModel.create(name);
     const response: UserCreatedResponse = {
-        message: 'User created successfully',
+        message: "User created successfully",
         data: newUser
     };
 
