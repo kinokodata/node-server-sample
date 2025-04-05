@@ -8,7 +8,9 @@ export async function findAll(): Promise<User[]> {
 
 export async function findById(id: number): Promise<User | undefined> {
     const result = await pool.query("SELECT id, name FROM users WHERE id = $1", [id]);
-    return result.rows[0];
+    if(result.rows.length >= 1) {
+        return result.rows[0];
+    }
 }
 
 export async function create(name: string): Promise<User> {
@@ -16,5 +18,7 @@ export async function create(name: string): Promise<User> {
         "INSERT INTO users (name) VALUES ($1) RETURNING id, name",
         [name]
     );
-    return result.rows[0];
+    if(result.rows.length >= 1) {
+        return result.rows[0];
+    }
 }
