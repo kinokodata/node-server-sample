@@ -41,7 +41,7 @@ router.post("/", async (req: Request<{}, {}, UserCreateRequest>, res: Response) 
         return;
     }
 
-    const newUser = await UserModel.create(name);
+    const newUser: User = await UserModel.create(name);
     const response: UserCreatedResponse = {
         message: "User created successfully",
         data: newUser
