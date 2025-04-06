@@ -6,19 +6,23 @@ export async function findAll(): Promise<User[]> {
     return result.rows;
 }
 
-export async function findById(id: number): Promise<User | undefined> {
+export async function findById(id: number): Promise<User | null> {
     const result = await pool.query("SELECT id, name FROM users WHERE id = $1", [id]);
     if(result.rows.length >= 1) {
         return result.rows[0];
+    } else {
+        return null;
     }
 }
 
-export async function create(name: string): Promise<User> {
+export async function create(name: string): Promise<User | null> {
     const result = await pool.query(
         "INSERT INTO users (name) VALUES ($1) RETURNING id, name",
         [name]
     );
     if(result.rows.length >= 1) {
         return result.rows[0];
+    } else {
+        return null;
     }
 }
