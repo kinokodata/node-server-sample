@@ -3,7 +3,7 @@ import {supabase} from "../db/clilent"
 
 export async function findAll(): Promise<User[]> {
     const {data, error} = await supabase
-        .from('users')
+        .from("users")
         .select();
 
     if(error) {
@@ -16,9 +16,9 @@ export async function findAll(): Promise<User[]> {
 
 export async function findById(id: number): Promise<User | undefined> {
     const {data, error} = await supabase
-        .from('users')
+        .from("users")
         .select()
-        .eq('id', id)
+        .eq("id", id)
         .single();
 
     if(error) {
@@ -31,7 +31,7 @@ export async function findById(id: number): Promise<User | undefined> {
 
 export async function create(name: string): Promise<User> {
     const {data, error} = await supabase
-        .from('users')
+        .from("users")
         .insert({
             name: name
         })
